@@ -51,10 +51,16 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
     out_template = os.path.join(DOWNLOAD_DIR, f"%(id)s.%(ext)s")
     
     ydl_opts = {
-        'format': 'bestaudio/best',
+        'format': 'ba/b',
         'outtmpl': out_template,
         'cookiefile': 'cookies.txt',
         'nocheckcertificate': True,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'web_safari'],
+                'player_skip': ['js', 'configs']
+            }
+        },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -63,7 +69,6 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'quiet': True,
         'no_warnings': True
     }
-
     try:
         loop = asyncio.get_event_loop()
         def extract():
