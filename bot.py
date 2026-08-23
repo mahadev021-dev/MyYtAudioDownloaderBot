@@ -53,14 +53,12 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': out_template,
+        'cookiefile': 'cookies.txt',
         'nocheckcertificate': True,
         'extractor_args': {
             'youtube': {
-                'player_client': ['android_creator', 'ios', 'tv_embedded']
+                'player_client': ['web']
             }
-        },
-        'http_headers': {
-            'User-Agent': 'com.google.android.youtube/19.09.37 (Linux; U; Android 11; Pixel 5)'
         },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -70,6 +68,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'quiet': True,
         'no_warnings': True
     }
+    
     try:
         loop = asyncio.get_event_loop()
         def extract():
