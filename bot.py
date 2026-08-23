@@ -43,6 +43,11 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'format': 'bestaudio/best',
         'outtmpl': out_template,
         'cookiefile': 'cookies.txt',
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['web', 'android']
+            }
+        },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
