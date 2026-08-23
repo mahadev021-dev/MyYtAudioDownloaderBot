@@ -1,19 +1,30 @@
 import os
 import re
 import asyncio
+import socket
+import threading
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 import yt_dlp
-import threading
-from http.server import HTTPServer, SimpleHTTPRequestHandler
 
+# --- Render Port Binding Fix ---
 def run_dummy_server():
-    port = int(os.environ.get("PORT", 8080))
-    server = HTTPServer(("0.0.0.0", port), SimpleHTTPRequestHandler)
-    server.serve_forever()
+    port = int(os.environ.get("PORT", 10000))
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server_socket.bind(("0.0.0.0", port))
+    server_socket.listen(5)
+    while True:
+        try:
+            client_conn, _ = server_socket.accept()
+            response = b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nOK"
+            client_conn.sendall(response)
+            client_conn.close()
+        except Exception:
+            pass
 
-# Render Web Service के लिए डमी सर्वर बैकग्राउंड में स्टार्ट करना
 threading.Thread(target=run_dummy_server, daemon=True).start()
+# -------------------------------
 
 BOT_TOKEN = "8816784739:AAH56XUXvtQ6j869KOAoMZNYXwiUfpa6grk"
 DOWNLOAD_DIR = "bot_downloads"
@@ -56,9 +67,8 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'quiet': True,
         'no_warnings': True
     }
-    
+
     try:
-        # बैकग्राउंड में ऑडियो डाउनलोड व कन्वर्ज़न
         loop = asyncio.get_event_loop()
         def extract():
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -74,7 +84,6 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         
         await status_msg.edit_text("📤 ऑडियो फाइल टेलीग्राम पर भेजी जा रही है...")
 
-        # टेलीग्राम पर MP3 ऑडियो भेजना
         with open(mp3_path, 'rb') as audio_file:
             await update.message.reply_audio(
                 audio=audio_file,
@@ -85,7 +94,6 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
                 parse_mode="Markdown"
             )
 
-        # डाउनलोड फ़ोल्डर से फ़ाइल डिलीट करना (मेमोरी क्लीनअप)
         if os.path.exists(mp3_path):
             os.remove(mp3_path)
         
