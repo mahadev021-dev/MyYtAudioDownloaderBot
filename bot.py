@@ -42,11 +42,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': out_template,
-        'extractor_args': {
-            'youtube': {
-                'player_client': ['ios', 'android_creator']
-            }
-        },
+        'cookiefile': 'cookies.txt',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -55,6 +51,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'quiet': True,
         'no_warnings': True
     }
+    
     try:
         # बैकग्राउंड में ऑडियो डाउनलोड व कन्वर्ज़न
         loop = asyncio.get_event_loop()
