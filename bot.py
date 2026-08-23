@@ -51,11 +51,16 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
     out_template = os.path.join(DOWNLOAD_DIR, f"%(id)s.%(ext)s")
     
     ydl_opts = {
-        'format': 'bestaudio/best/ba/b',
+        'format': 'ba/b',
         'outtmpl': out_template,
         'cookiefile': 'cookies.txt',
         'nocheckcertificate': True,
-        'noplaylist': True,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['mweb', 'android'],
+                'player_skip': ['webpage']
+            }
+        },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
