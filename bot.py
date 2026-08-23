@@ -51,7 +51,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
     out_template = os.path.join(DOWNLOAD_DIR, f"%(id)s.%(ext)s")
     
     ydl_opts = {
-        'format': 'bestaudio/best',
+        'format': 'ba/b/best',
         'outtmpl': out_template,
         'cookiefile': 'cookies.txt',
         'nocheckcertificate': True,
