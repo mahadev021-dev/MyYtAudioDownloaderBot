@@ -4,8 +4,6 @@ import asyncio
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 import yt_dlp
-
-import os
 import threading
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
@@ -14,11 +12,10 @@ def run_dummy_server():
     server = HTTPServer(("0.0.0.0", port), SimpleHTTPRequestHandler)
     server.serve_forever()
 
-# अपने बॉट को स्टार्ट करने से ठीक पहले इसे थ्रेड में चला दें:
+# Render Web Service के लिए डमी सर्वर बैकग्राउंड में स्टार्ट करना
 threading.Thread(target=run_dummy_server, daemon=True).start()
-# अपना Bot Token यहाँ डालें
-BOT_TOKEN = "8816784739:AAH56XUXvtQ6j869KOAoMZNYXwiUfpa6grk"
 
+BOT_TOKEN = "8816784739:AAH56XUXvtQ6j869KOAoMZNYXwiUfpa6grk"
 DOWNLOAD_DIR = "bot_downloads"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
@@ -32,17 +29,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
     url = update.message.text.strip()
-
+    
     # लिंक वैलिडेशन
     if not ("youtube.com" in url or "youtu.be" in url):
         await update.message.reply_text("❌ कृपया केवल वैध YouTube वीडियो का लिंक भेजें।")
         return
 
     status_msg = await update.message.reply_text("⏳ ऑडियो डाउनलोड व कन्वर्ट हो रहा है, कृपया प्रतीक्षा करें...")
-
+    
     out_template = os.path.join(DOWNLOAD_DIR, f"%(id)s.%(ext)s")
-
-   ydl_opts = {
+    
+    ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': out_template,
         'extractor_args': {
@@ -73,7 +70,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
                 return mp3_path, title, uploader, duration
 
         mp3_path, title, uploader, duration = await loop.run_in_executor(None, extract)
-
+        
         await status_msg.edit_text("📤 ऑडियो फाइल टेलीग्राम पर भेजी जा रही है...")
 
         # टेलीग्राम पर MP3 ऑडियो भेजना
@@ -90,7 +87,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         # डाउनलोड फ़ोल्डर से फ़ाइल डिलीट करना (मेमोरी क्लीनअप)
         if os.path.exists(mp3_path):
             os.remove(mp3_path)
-            
+        
         await status_msg.delete()
 
     except Exception as e:
@@ -99,8 +96,6 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
 if __name__ == '__main__':
     print("🤖 Telegram YouTube MP3 Bot Started...")
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-
     app.add_handler(CommandHandler("start", start))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_youtube_link))
-
     app.run_polling()
