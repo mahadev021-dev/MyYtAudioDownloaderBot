@@ -42,9 +42,14 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
 
     out_template = os.path.join(DOWNLOAD_DIR, f"%(id)s.%(ext)s")
 
-    ydl_opts = {
+   ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': out_template,
+        'extractor_args': {
+            'youtube': {
+                'player_client': ['android', 'web']
+            }
+        },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
