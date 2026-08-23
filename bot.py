@@ -17,7 +17,7 @@ def run_dummy_server():
 # अपने बॉट को स्टार्ट करने से ठीक पहले इसे थ्रेड में चला दें:
 threading.Thread(target=run_dummy_server, daemon=True).start()
 # अपना Bot Token यहाँ डालें
-BOT_TOKEN = "8816784739:AAH56XUXvtQ6j869KOAoMZNYXwiUfpa6grk"
+BOT_TOKEN = "telegram BOT_TOKEN"
 
 DOWNLOAD_DIR = "bot_downloads"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
