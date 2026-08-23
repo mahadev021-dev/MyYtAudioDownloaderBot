@@ -44,7 +44,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'outtmpl': out_template,
         'extractor_args': {
             'youtube': {
-                'player_client': ['android', 'web']
+                'player_client': ['ios', 'android_creator']
             }
         },
         'postprocessors': [{
@@ -55,7 +55,6 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'quiet': True,
         'no_warnings': True
     }
-
     try:
         # बैकग्राउंड में ऑडियो डाउनलोड व कन्वर्ज़न
         loop = asyncio.get_event_loop()
