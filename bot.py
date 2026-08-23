@@ -54,10 +54,13 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
         'format': 'bestaudio/best',
         'outtmpl': out_template,
         'cookiefile': 'cookies.txt',
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'nocheckcertificate': True,
+        'ignoreerrors': False,
+        'no_warnings': True,
         'extractor_args': {
             'youtube': {
-                'player_client': ['android_creator', 'ios', 'mweb']
+                'player_client': ['android', 'ios'],
+                'skip': ['webpage']
             }
         },
         'postprocessors': [{
@@ -65,8 +68,7 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
             'preferredcodec': 'mp3',
             'preferredquality': '320',
         }],
-        'quiet': True,
-        'no_warnings': True
+        'quiet': True
     }
 
     try:
