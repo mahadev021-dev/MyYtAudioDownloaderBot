@@ -51,19 +51,14 @@ async def handle_youtube_link(update: Update, context: ContextTypes.DEFAULT_TYPE
     out_template = os.path.join(DOWNLOAD_DIR, f"%(id)s.%(ext)s")
     
     ydl_opts = {
-        'format': 'ba/b',
+        'format': 'bestaudio/best',
         'outtmpl': out_template,
         'cookiefile': 'cookies.txt',
         'nocheckcertificate': True,
         'extractor_args': {
             'youtube': {
-                'player_client': ['android_creator', 'ios'],
-                'player_skip': ['configs', 'webpage']
+                'player_client': ['android', 'web']
             }
-        },
-        'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-            'Accept-Language': 'en-US,en;q=0.9'
         },
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
